@@ -1,0 +1,86 @@
+@startuml Hotel Management System
+
+' Classes
+abstract class Room {
+    # roomNumber: int
+    # price: double
+    # isOccupied: boolean
+    # guestName: String
+    + Room(roomNumber: int, price: double)
+    + {abstract} getRoomType(): String
+    + getRoomNumber(): int
+    + getPrice(): double
+    + isOccupied(): boolean
+    + getGuestName(): String
+    + setOccupied(occupied: boolean): void
+    + setGuestName(guestName: String): void
+}
+
+class StandardRoom {
+    + StandardRoom(roomNumber: int, price: double)
+    + getRoomType(): String
+}
+
+class DeluxeRoom {
+    + DeluxeRoom(roomNumber: int, price: double)
+    + getRoomType(): String
+}
+
+class Hotel {
+    - name: String
+    - rooms: List<Room>
+    - bookings: List<Booking>
+    + Hotel(name: String)
+    - initializeRooms(): void
+    + getAvailableRooms(): List<Room>
+    + bookRoom(roomNumber: int, guestName: String, paymentProcessor: PaymentProcessor): boolean
+    + checkOut(roomNumber: int): boolean
+    + displayAvailableRooms(): void
+    + displayOccupiedRooms(): void
+}
+
+class Booking {
+    - room: Room
+    - guestName: String
+    - paymentProcessor: PaymentProcessor
+    + Booking(room: Room, guestName: String, paymentProcessor: PaymentProcessor)
+    + getRoom(): Room
+    + getGuestName(): String
+    + getPaymentProcessor(): PaymentProcessor
+}
+
+interface PaymentProcessor {
+    + {abstract} processPayment(amount: double): boolean
+    + {abstract} getPaymentMethod(): String
+}
+
+class CreditCardPayment {
+    - cardNumber: String
+    - cardHolderName: String
+    + CreditCardPayment(cardNumber: String, cardHolderName: String)
+    + processPayment(amount: double): boolean
+    + getPaymentMethod(): String
+}
+
+class HotelManagementSystem {
+    - {static} hotel: Hotel
+    - {static} scanner: Scanner
+    + {static} main(args: String[]): void
+    - {static} displayMenu(): void
+    - {static} bookRoom(): void
+    - {static} checkOut(): void
+    - {static} getIntInput(prompt: String): int
+    - {static} getStringInput(prompt: String): String
+}
+
+' Relationships
+Room <|-- StandardRoom
+Room <|-- DeluxeRoom
+Hotel o-- Room : contains
+Hotel o-- Booking : manages
+Booking o-- Room : references
+Booking o-- PaymentProcessor : uses
+PaymentProcessor <|.. CreditCardPayment : implements
+HotelManagementSystem --> Hotel : uses
+
+@enduml 
